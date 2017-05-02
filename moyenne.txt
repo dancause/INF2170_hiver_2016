@@ -1,0 +1,276 @@
+; ****************************************************************************************
+;       Programme: moyenne.TXT     version PEP813 sous Windows
+;
+;       Ce programme calcul des notes provenant d'une chaine de caractère.
+;       Chaques caractères sont validés un à un pour s'assurer que ce sont des chiffres (0 à 9).
+;       Les notes sont construites une à une en boucle. Le logiciel comptes le nombres de notes et 
+;       de caractère. Il y a un nombre limiter de caractères permis dans le calcul(20).
+;       Lorsqu'une touche entré est détecté des validations sont effectuer avant de faire 
+;       la moyenne. Des messages d'erreurs seront affichés si une note est plus grand que 100
+;       ou si un caractère non numérique est entré. Le logiciel va demander des notes tant et 
+;       aussi longtemps que 999 ne sera pas entré correctement.
+;
+;
+;       auteur:   janin dancause
+;       courriel: dancause.janin@courrier.uqam.ca
+;       date:     Hiver 2016
+;       cours:    INF2170
+; *************************************************************************************
+;
+;************************************introduction**************************************
+         stro    bienvenu,d
+         charo    "\n",i 
+         stro    instru1,d
+         stro    instru2,d
+         stro    instru3,d
+         stro    instru4,d
+         stro    instru6,d
+         stro    instru5,d
+         charo    "\n",i 
+;************************************initialise les variables**************************
+  
+debut:   LDA     0,i
+         ldx     0,i 
+         sta     nbNote,d
+         sta     total,d
+         sta     nombre,d
+         sta     compteur,d
+         sta     detec999,d 
+         sta     temp,d 
+         sta     carac,d 
+         sta     moyenne,d  
+         stro    separa,d
+      
+;************************************lecture du caractere***************************         
+lire:    LDA     0,i                           
+         sta     carac,d
+         CHARI   carac,d    
+         LDBYTEA carac,d
+
+         LDx     compteur,d  ;un caractère numérique lu de plus 
+         ADDx    1,i       
+         STx     compteur,d
+
+         CPA     10,i        
+         BREQ    enter ;fin d'une ligne    
+
+         CPA     ' ',i
+         BREQ    addition ;fin d'un nombre
+
+;************************************multiplication*********************************  
+
+         LDX     nombre,d    ;valide que nombre soit a zªro
+         BREQ    zero     
+         ASLX                ; * 2   
+         ASLX                ; * 4     
+         ADDX    nombre,d    ; * 5    
+         ASLX                ; * 10
+         STX     nombre,d
+        
+;************************************validation du caract¿re************************ 
+
+zero:    CPA     '0',i       
+         BRLT    vider    
+         CPA     '9',i       
+         BRGT    vider    
+         SUBA    '0',i       ;ASCII a Décimal
+         ADDA    nombre,d   
+         STA     nombre,d
+  
+         lda     1,i
+         sta     temp,d	
+  
+         lda     nombre,d
+         cpa     100,i
+         brgt    over 
+
+         LDx     compteur,d  ;un caractère numérique lu de plus 
+         cpx     20,i
+         brgt    vider  
+
+         BR      lire        
+
+;**************************un enter est entré **************************************  
+
+ enter:  lda     compteur,d 
+         suba    1,i
+         sta     compteur,d
+
+         lda     detec999,d
+         cpa     1,i
+         breq    f999
+
+         lda     nbNote,d
+         adda    temp,d  
+         sta     nbNote,d  
+
+         lda     nbNote,d 
+         cpa     0,i
+         breq    note0            
+         
+         lda     total,d
+         adda    nombre,d
+         sta     total,d
+         br      division
+
+;*************************calcul de la moyenne**************************************
+
+division:ASLA               ; * 2   
+         ASLA               ; * 4     
+         ADDA    total,d    ; * 5    
+         ASLA               ; * 10
+         STA     total,d
+         LDX     0,i         ; quotient
+soustrai:ADDX    1,i         
+         SUBA    nbNote,d  
+         BRGE    soustrai    
+         SUBX    1,i         
+         ADDA    nbNote,d  
+         STX     moyenne,d  
+         STA     reste,d
+         sta     reste1,d 
+         LDX     0,i         ; quotient
+         lda     moyenne,d
+soustra: ADDX    1,i         
+         SUBA    10,i  
+         BRGE    soustra    
+         SUBX    1,i         
+         ADDA    10,i  
+         STX     moyenne,d  
+         STA     reste,d
+
+;arrondi
+         lda     reste1,d
+         ASLA               ; * 2   
+         ASLA               ; * 4     
+         ADDA    reste1,d   ; * 5    
+         ASLA               ; * 10             
+
+         LDX     0,i         ; quotient
+sous:    ADDX    1,i         
+         SUBA    3,i  
+         BRGE    sous    
+         SUBX    1,i
+         adda    3,i
+         sta     reste1,d 
+         asla
+         cpa     3,i
+         brgt    ajus
+         br      AFFICH 
+
+ajus:    lda     reste,d
+         adda    1,i
+         sta     reste,d   
+         
+;***************************affichage des notes************************************* 
+        
+AFFICH:  LDA     nbNote,d 
+         CPA     1,i
+         BREQ    onenote 
+         STRO    NOTE1,d
+         DECO    nbNote,d
+         STRO    NOTE2,d
+         BR	      moyen
+           
+onenote: stro    NOTE,d
+
+moyen:   DECO    moyenne,d
+         LDX     reste,d
+         cpx     0,i
+         breq    r100
+         charo   ',',i
+         deco    reste,d
+r100:    stro    NOTE3,d 
+         br      nouveau
+ 
+note0:   STRO    NOTE4,d 
+         br      nouveau        
+       
+over:    cpa     999,i
+         breq    t999 
+         cpa     100,i
+         brgt    vider
+
+t999:    lda     1,i
+         sta     detec999,d
+         br      lire
+
+f999:    lda     compteur,d 
+         cpa     3,i
+         breq    fin
+         br      msg100
+
+msg100:  stro    over100,d
+         br      nouveau
+
+;****************************vide la ligne***********************************
+vider:   LDA     0,i                           
+         CHARI   carac,d    
+         LDBYTEA carac,d
+         cpa     10,i
+         brne    vider
+         stro    over100,d 
+         br      nouveau
+
+;*******************************operation après l'espace****************************
+
+addition:lda     temp,d
+         adda    nbNote,d
+         sta     nbNote,d
+
+         ldx     total,d
+         addx    nombre,d
+         stx     total,d
+         ldx     0,i
+         stx     nombre,d
+         
+         LDA     0,i
+         sta     temp,d 
+ 
+saut:    br      lire
+
+nouveau: br      debut
+
+fin:     STRO    normale,d   ;fin normale du programme    
+         STOP
+
+;************************************commentaires***********************************
+
+separa:  .ascii "\n-----------------------------------------\n\x00"
+
+;commentaires d'erreur
+                                
+over100: .ASCII  "Entrée invalide.\x00"                            
+normale: .ASCII  "Fin normale du programme.\x00"
+
+;commentaires pour l'affichage de la note
+
+NOTE:    .ASCII "La moyenne de 1 note est de \x00"
+NOTE1:   .ASCII "La moyenne des \X00"
+NOTE2:   .ASCII " notes est de \X00"
+NOTE3:   .ASCII "/100.\X00"
+NOTE4:   .ASCII "La moyenne de 0 note est de 0/100.\X00"
+
+;commentaires d'instruction
+
+bienvenu:.ascii  "Bienvenu dans le logiciel de calcul de moyenne.\x00"
+instru1: .ascii  "Vous devez inscrire des notes entre 0 et 100.\n\x00" 
+instru2: .ascii  "Les notes doivent être séparées par un espace.\n\x00"
+instru3: .ascii  "Lorsque vous compléter une ligne faites la touche entrée.\n\x00"
+instru6: .ascii  "Vous ne devez pas dépasser la limite du nombre de caractères (20).\n\x00"
+instru4: .ascii  "Le logiciel va faire le calcul et demander une nouvelle suite de note.\n\x00"
+instru5: .ascii  "Pour arrêter le logiciel vous devez faire 999 sans espace.\n\x00"
+	
+;************************************variables**************************************
+
+moyenne: .block 2           ; #2d 
+reste:   .block 2           ; #2d
+reste1:  .block 2           ; #2d
+temp:    .block 2           ; #2d  
+nbNote:  .block 2           ; #2d
+detec999:.block 2           ; #2d
+total:   .block 2           ; #2d        
+nombre:  .block 2           ; #2d
+compteur:.block 2           ; #2d
+carac:   .block 1           ; #1h
+         .END   
