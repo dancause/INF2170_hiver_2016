@@ -1,12 +1,12 @@
 ; *********************************************************
 ; Programme: calend.TXT          version PEP813 sous MacOSx
 ;
-; Programme qui lit des nombres ‡ l'Ècran pour afficher un calendirer
+; Programme qui lit des nombres √† l'√©cran pour afficher un calendirer
 ; On doit entrer une suite de 6 chiffres pour le traitement
-; Les quatres premiers chiffres sont l'annÈe et les deux suivants le mois
-; annÈe 1900 ‡ 2050 inclusivement.
-; Le programme va afficher une erreur si les parametres ne sont pas respectÈ
-; Pour mettre fin au programme il font entrÈ 9999 sans espace.
+; Les quatres premiers chiffres sont l'ann√©e et les deux suivants le mois
+; ann√©e doit √™tre 1900 √† 2050 inclusivement.
+; Le programme va afficher une erreur si les parametres ne sont pas respect√©
+; Pour mettre fin au programme il faut entrer 9999 sans espace.
 ;
 ;       auteur:   janin dancause
 ;       courriel: dancause.janin@courrier.uqam.ca
@@ -43,12 +43,12 @@ retour:  ldx     0,i
 
 
 
-boucle:  CHARI   chaine,x    ; lecture d'un caractËre de chaine
+boucle:  CHARI   chaine,x    ; lecture d'un caract√®re de chaine
          LDA     0,i         ; efface le registre A
-         LDBYTEA chaine,x    ; charge le caractËre lu
+         LDBYTEA chaine,x    ; charge le caract√®re lu
          ADDX    1,i         ; position suivante
-         CPA     10,i        ; dernier caractËre ?
-         BREQ    ans         ; oui, c'est terminÈ 
+         CPA     10,i        ; dernier caract√®re ?
+         BREQ    ans         ; oui, c'est termin√© 
          CPA     '0',i       ; entre 0 et 9 ?
          BRLT    erreur      ; non, ce n'est pas un chiffre 
          CPA     '9',i       
@@ -60,17 +60,17 @@ boucle:  CHARI   chaine,x    ; lecture d'un caractËre de chaine
          brgt    nbChifr 
          BR      boucle
 
-;************************************construction de l'annÈe************************ 
+;************************************construction de l'ann√©e************************ 
 ans:     lda     0,i
          ldx     0,i
-year:    LDA     annee,d    ;valide que nombre soit a z™ro
+year:    LDA     annee,d    ;valide que nombre soit a z¬™ro
          BREQ    zero
          CALL    multi1    
          STA     annee,d 
          lda     0,i
         
 zero:    LDBYTEA chaine,x   
-         SUBA    '0',i       ;ASCII a DÈcimal
+         SUBA    '0',i       ;ASCII a D√©cimal
          ADDA    annee,d   
          STA     annee,d
          addx    1,i
@@ -93,14 +93,14 @@ month:   cpa     9999,i
          cpa     6,i
          brlt    manque  
          lda     0,i
-douze:   LDA     douzeM,d    ;valide que nombre soit a zÈro 
+douze:   LDA     douzeM,d    ;valide que nombre soit a z√©ro 
          BREQ    rien 
          call    multi1    
          STA     douzeM,d 
          lda     0,i
         
 rien:    LDBYTEA chaine,x   
-         SUBA    '0',i       ;ASCII a DÈcimal
+         SUBA    '0',i       ;ASCII a D√©cimal
          ADDA    douzeM,d   
          STA     douzeM,d
          addx    1,i
@@ -320,29 +320,29 @@ terminer:stro    msgend,d
 
 
 
-msgerror:.ascii  "\nIl y a une erreur dans le nombre entrÈ.\x00"
-msgover: .ascii  "\nLa date ou le nombre entrÈ est trop grand.\x00"
+msgerror:.ascii  "\nIl y a une erreur dans le nombre entr√©.\x00"
+msgover: .ascii  "\nLa date ou le nombre entr√© est trop grand.\x00"
 msgnbC:  .ascii  "\nLe nombre de chiffre est trop grand pour le calcul.\x00"
 msg5:    .ascii  "\nIl manque des chiffre pour calculer la date.\x00"
-msgAN:   .ascii  "\nL'annÈe ne peut pas Ítre calculÈ.\x00"
+msgAN:   .ascii  "\nL'ann√©e ne peut pas √™tre calcul√©.\x00"
 msgdouzM:.ascii "\nIl y a une erreur avec le nombre.\x00" 
 msgend:  .ascii  "\nFin Nornale du programme.\x00"
 paie:    .ascii  "\n\n      Jours de paie: \x00"
 ligne:   .ascii  "\n________________________________________\x00"
-question:.ascii  "Entrez la date dÈsirÈe: \x00"
+question:.ascii  "Entrez la date d√©sir√©e: \x00"
 
 janvier: .ascii  "\n           Janvier  \x00"
-fevrier: .ascii  "\n           FÈvrier  \x00"
+fevrier: .ascii  "\n           F√©vrier  \x00"
 mars:    .ascii  "\n           Mars  \x00"
 avril:   .ascii  "\n           Avril  \x00"
 mai:     .ascii  "\n           Mai  \x00"
 juin:    .ascii  "\n           Juin  \x00"
 juillet: .ascii  "\n           Juillet  \x00"
-aout:    .ascii  "\n           Ao˚t  \x00"
+aout:    .ascii  "\n           Ao√ªt  \x00"
 septembr:.ascii  "\n           Septembre  \x00"
 octobre: .ascii  "\n           Octobre  \x00"
 novembre:.ascii  "\n           Novembre  \x00"
-decembre:.ascii  "\n           DÈcembre  \x00"
+decembre:.ascii  "\n           D√©cembre  \x00"
 
 entete:  .ascii  "\n\n       D  L  M  M  J  V  S\n\n\x00" 
 jour:    .ascii  " 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31  \x00"
@@ -424,8 +424,8 @@ multipl3:sta     temp,d
 
 calendM:         NOP0                     ;switch(Ind) {
                  LDX         douzeM,d    ; 
-                 SUBX        1,i          ; ramener ‡ [0..4]
-                 ASLX                     ; * 2 => indice rÈel dans
+                 SUBX        1,i          ; ramener √† [0..4]
+                 ASLX                     ; * 2 => indice r√©el dans
                  BR          TABnn,x      ; table (adresse = 2 octets)
 TABnn:           .ADDRSS CASnn_1 ;
                  .ADDRSS CASnn_2 ;
@@ -454,7 +454,7 @@ Encore1:         LDBYTEA     janvier,x    ; while(true)
 Arret1:          STX         indice,d
                  BR          ENDCASnn
                                       ; break;
-CASnn_2:         NOP0                 ; case 2: fÈrvier
+CASnn_2:         NOP0                 ; case 2: f√©rvier
                  call        bisexx 
                  lda         isbiss,d
                  cpa         0,i
@@ -612,7 +612,7 @@ Encore11:        LDBYTEA novembre,x ; while(true)
 Arret11:         STX     indice,d
                  BR ENDCASnn ; break;
 
-CASnn_12:        NOP0 ; case 12: dÈcembre
+CASnn_12:        NOP0 ; case 12: d√©cembre
                  lda         31,i
                  sta     nbJour,d 
                  LDX     0,i ; X = 0;
